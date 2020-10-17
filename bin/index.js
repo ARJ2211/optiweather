@@ -27,13 +27,15 @@ getIP(function(err, ip) {
         throw err;
     }
     var geo = geoip.lookup(ip);
-    show_geo(geo)
+    //geo = '84.255.159.72';
+    show_geo(geo);
 });
 
 
 function show_geo(geo) {
-    // console.log(geo);
+    //console.log(geo);
     const city = geo["city"];
+    //const city = 'bahrain';
     const apiKey = 'bb1391ccb025231d996d9ec383b262bb';
     const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`
 
@@ -42,7 +44,6 @@ function show_geo(geo) {
             console.log('error:', error);
         } else {
             const weather = JSON.parse(body);
-            const temp = weather.main.temp;
             //console.log(weather);
             parser(weather);
         }
