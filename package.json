@@ -1,6 +1,6 @@
 {
     "name": "optiweather",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "get weather details right into your terminal!",
     "main": "bin/index.js",
     "scripts": {
