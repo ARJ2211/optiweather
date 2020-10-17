@@ -35,7 +35,7 @@ getIP(function(err, ip) {
 function show_geo(geo) {
     //console.log(geo);
     const city = geo["city"];
-    //const city = 'bahrain';
+    //const city = 'Australia';
     const apiKey = 'bb1391ccb025231d996d9ec383b262bb';
     const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`
 
@@ -135,7 +135,7 @@ function parser(weather) {
     t_min = t_min.toFixed(2);
 
     var t_max = weather.main.temp_max - k;
-    t_min = t_max.toFixed(2);
+    t_max = t_max.toFixed(2);
     /////////////////////////////////////////   ~end
 
     /////////////////////////////////////////       Format Epoch timestamps to datetime
