@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 'use strict'
 
 const req_api = require('request');
