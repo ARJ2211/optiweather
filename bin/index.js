@@ -30,7 +30,7 @@ const setting_text = {
     align: 'left', // define text alignment
     colors: ['system'], // define all colors
     background: 'transparent', // define the background color, you can also use `backgroundColor` here as key
-    letterSpacing: 1, // define letter spacing
+    letterSpacing: .5, // define letter spacing
     lineHeight: 0, // define the line height
     space: true, // define if the output text should have empty lines on top and on the bottom
     maxLength: '0', // define how many character can be on one line
@@ -40,7 +40,20 @@ const setting_text = {
     env: 'node' // define the environment CFonts is being executed in
 };
 
-
+const setting_text2 = {
+    font: 'chrome', // define the font face
+    align: 'left', // define text alignment
+    colors: ['system'], // define all colors
+    background: 'transparent', // define the background color, you can also use `backgroundColor` here as key
+    letterSpacing: 1, // define letter spacing
+    lineHeight: 0, // define the line height
+    space: true, // define if the output text should have empty lines on top and on the bottom
+    maxLength: '0', // define how many character can be on one line
+    gradient: "cyan,blue", // define your two gradient colors
+    independentGradient: false, // define if you want to recalculate the gradient for each new line
+    transitionGradient: false, // define if this is a transition between colors directly
+    env: 'node' // define the environment CFonts is being executed in
+};
 
 
 const style_clout = {
@@ -141,7 +154,7 @@ function main() {
 }
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-function show_question(box_clout) {
+function show_question(box_clout, thanks) {
     inquirer
         .prompt([{
                 type: 'list',
@@ -176,7 +189,7 @@ function show_question(box_clout) {
                     })
             } else {
                 console.clear();
-                console.log('THANK YOU HAVE A NICE DAY');
+                console.log(thanks.string);
             }
         })
 }
@@ -286,9 +299,10 @@ function parser(weather) {
         `${content.github}`;
 
 
+    const thanks = Cfonts.render('THANKYOU HAVE A NICE DAY', setting_text2)
 
     const box_clout = boxen(clout, style_clout);
-    show_question(box_clout);
+    show_question(box_clout, thanks);
 
 
 
