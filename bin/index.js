@@ -9,48 +9,9 @@ const extIP = require('external-ip');
 const boxen = require('boxen');
 const Cfonts = require('cfonts');
 const { resolveInclude } = require('ejs');
-
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-let getIP = extIP({
-    replace: true,
-    services: ['https://ipinfo.io/ip', 'http://ifconfig.co/x-real-ip', 'http://ifconfig.io/ip'],
-    timeout: 600,
-    getIP: 'parallel',
-    userAgent: 'Chrome 15.0.874 / Mac OS X 10.8.1'
-});
-
-
-getIP(function(err, ip) {
-    if (err) {
-        throw err;
-    }
-    var geo = geoip.lookup(ip);
-    //geo = '84.255.159.72';
-    show_geo(geo);
-});
-
-
-function show_geo(geo) {
-    //console.log(geo);
-    const city = geo["city"];
-    //const city = 'Australia';
-    const apiKey = 'bb1391ccb025231d996d9ec383b262bb';
-    const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`
-
-    req_api(url, function(err, response, body) {
-        if (err) {
-            console.log('error:', error);
-        } else {
-            const weather = JSON.parse(body);
-            //console.log(weather);
-            parser(weather);
-        }
-    })
-}
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
+const inquirer = require('inquirer');
+const Choices = require('inquirer/lib/objects/choices');
+const e = require('express');
 
 
 const log = console.log;
@@ -64,7 +25,7 @@ const cyan = chalk.cyan;
 const star = chalk.whiteBright('*');
 
 
-const setting = {
+const setting_text = {
     font: 'tiny', // define the font face
     align: 'left', // define text alignment
     colors: ['system'], // define all colors
@@ -80,6 +41,15 @@ const setting = {
 };
 
 
+
+
+const style_clout = {
+    padding: 1,
+    margain: 2,
+    borderStyle: "round",
+    borderColor: "green",
+    align: "left"
+}
 
 
 const style_main = {
@@ -121,6 +91,97 @@ const style_rise = { // custom style for the day time
     align: "center"
 };
 
+
+main()
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+function main() {
+    let getIP = extIP({
+        replace: true,
+        services: ['https://ipinfo.io/ip', 'http://ifconfig.co/x-real-ip', 'http://ifconfig.io/ip'],
+        timeout: 600,
+        getIP: 'parallel',
+        userAgent: 'Chrome 15.0.874 / Mac OS X 10.8.1'
+    });
+
+
+    getIP(function(err, ip) {
+        if (err) {
+            throw err;
+        }
+        var geo = geoip.lookup(ip);
+        //geo = '84.255.159.72';
+        show_geo(geo);
+    });
+
+
+    function show_geo(geo) {
+        //console.log(geo);
+        const city = geo["city"];
+        //const city = 'Australia';
+        const apiKey = 'bb1391ccb025231d996d9ec383b262bb';
+        const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`
+
+        req_api(url, function(err, response, body) {
+            if (err) {
+                console.log('error:', error);
+            } else {
+                const weather = JSON.parse(body);
+                if (weather == NaN) {
+                    message = 'No valid response for ' + `${city}`;
+                    console.log(message);
+                }
+                //console.log(weather);
+                parser(weather);
+            }
+        })
+    }
+
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function show_question(box_clout) {
+    inquirer
+        .prompt([{
+                type: 'list',
+                name: 'details',
+                message: 'Do you want to know more about me?',
+                choices: ['Yes', 'Exit', new inquirer.Separator()]
+            },
+            // {
+            //     type: 'list',
+            //     name: 'Details2',
+            //     //message: 'Do you want to know more about me?',
+            //     choices: ['No']
+
+            // }
+
+        ])
+        .then(answers => {
+            if (answers.details == 'Yes') {
+                log(box_clout);
+                inquirer
+                    .prompt([{
+                        type: 'list',
+                        name: 'go_back',
+                        message: 'Return to home page?',
+                        choices: ['Yes', 'No', new inquirer.Separator()]
+                    }])
+                    .then(answers => {
+                        if (answers.go_back == 'Yes') {
+                            console.clear();
+                            main();
+                        }
+                    })
+            } else {
+                console.clear();
+                console.log('THANK YOU HAVE A NICE DAY');
+            }
+        })
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function parser(weather) {
 
@@ -174,7 +235,7 @@ function parser(weather) {
 
 
     const title = `${content.title}`;
-    const pretty = Cfonts.render(title, setting);
+    const pretty = Cfonts.render(title, setting_text);
     const cf_title = pretty.string;
 
 
@@ -197,8 +258,8 @@ function parser(weather) {
 
 
     const extra = line +
-        `${content.temp_min}   ` + `${content.sunset}` + line +
-        `${content.temp_max}   ` + `   ${content.sunrise}` + line
+        `${content.temp_min}  ` + ` ${content.sunset}` + line +
+        `${content.temp_max}  ` + `${content.sunrise}` + line
 
 
 
@@ -216,35 +277,20 @@ function parser(weather) {
 
     log('\n')
     log(box_body);
-    log('\n')
+    //log('\n')
+
+
+
+    const clout = `${content.email}` + line +
+        `${content.linkedin}` + line +
+        `${content.github}`;
+
+
+
+    const box_clout = boxen(clout, style_clout);
+    show_question(box_clout);
+
+
+
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const apiKey = 'bb1391ccb025231d996d9ec383b262bb';
-// const city = 'maharashtra';
-// const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}`
-
-
-// req_api(url, function(err, response, body) {
-//     if (err) {
-//         console.log('error:', error);
-//     } else {
-//         var weather = JSON.parse(body);
-//         var temp = weather.main.temp;
-//         //console.log(weather);
-//     }
-// });
